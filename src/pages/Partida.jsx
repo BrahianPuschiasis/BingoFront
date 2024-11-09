@@ -14,8 +14,9 @@ function Partida() {
     columnO: [],
   });
   const [connectedUsers, setConnectedUsers] = useState([]);
-  const [currentNumber, setCurrentNumber] = useState(null); 
-  const [gameStarted, setGameStarted] = useState(false); 
+  const [currentNumber, setCurrentNumber] = useState(null);
+  const [gameStarted, setGameStarted] = useState(false);
+  const [selectedNumbers, setSelectedNumbers] = useState([]);
   const { state } = useLocation();
   const { username, token } = state || {};
   const navigate = useNavigate();
@@ -26,14 +27,13 @@ function Partida() {
     ws.onopen = () => {
       console.log("WebSocket conectado");
       setWebSocket(ws);
-      ws.send("crear tarjeta"); // Solicitar la creación de la tarjeta
+      ws.send("crear tarjeta");
     };
 
     ws.onmessage = (event) => {
       const message = event.data;
       console.log("Mensaje recibido:", message);
 
-      // Manejar la tarjeta de bingo
       if (message.startsWith("Tarjeton:")) {
         try {
           const cardData = JSON.parse(message.replace("Tarjeton:", ""));
@@ -44,7 +44,6 @@ function Partida() {
         }
       }
 
-      // Manejar los usuarios conectados
       if (message.startsWith("Usuarios conectados:")) {
         const users = message
           .replace("Usuarios conectados: ", "")
@@ -53,10 +52,24 @@ function Partida() {
         setConnectedUsers(users);
       }
 
-      // Manejar el número generado
       if (message.startsWith("Número generado:")) {
-        const number = message.replace("Número generado: ", "");
-        setCurrentNumber(number);
+        let number = message.replace("Número generado: ", "");
+        let letter = '';
+
+        if (number >= 1 && number <= 15) {
+          letter = 'B';
+        } else if (number >= 16 && number <= 30) {
+          letter = 'I';
+        } else if (number >= 31 && number <= 45) {
+          letter = 'N';
+        } else if (number >= 46 && number <= 60) {
+          letter = 'G';
+        } else if (number >= 61 && number <= 75) {
+          letter = 'O';
+        }
+
+        const formattedNumber = `${letter}${number}`;
+        setCurrentNumber(formattedNumber);
       }
     };
 
@@ -77,32 +90,43 @@ function Partida() {
       webSocket.send(`${username} ha salido`);
       webSocket.close();
     }
-    navigate("/"); 
+    navigate("/");
   };
 
-  // Función para iniciar el juego
   const startGame = () => {
     if (webSocket && !gameStarted) {
-      webSocket.send("iniciar juego"); 
-      setGameStarted(true); 
+      webSocket.send("iniciar juego");
+      setGameStarted(true);
+    }
+  };
+
+  const handleNumberClick = (number) => {
+    const currentBallNumber = currentNumber ? currentNumber.replace(/[A-Z]/, '') : null;
+
+    console.log(`Número clickado: ${number}, Número aleatorio: ${currentBallNumber}`);
+
+    if (currentBallNumber && number === parseInt(currentBallNumber)) {
+      setSelectedNumbers((prevSelectedNumbers) => [
+        ...prevSelectedNumbers,
+        number,
+      ]);
     }
   };
 
   useEffect(() => {
     if (username && token) {
-      connectWebSocket(); 
+      connectWebSocket();
     }
 
     return () => {
       if (webSocket) {
-        webSocket.close(); 
+        webSocket.close();
       }
     };
   }, [username, token]);
 
   return (
     <div className="partida-container">
-      {/* Mostrar el número actual */}
       <div className="current-number">
         {currentNumber ? (
           <h2>{currentNumber}</h2>
@@ -111,7 +135,6 @@ function Partida() {
         )}
       </div>
 
-      {/* Mostrar los usuarios conectados */}
       <div className="connected-users">
         <h3>Usuarios Conectados:</h3>
         <ul>
@@ -123,7 +146,6 @@ function Partida() {
         </ul>
       </div>
 
-      {/* Mostrar la tarjeta de bingo */}
       <div className="bingo-card-container">
         {card && Object.keys(card).length > 0 ? (
           <div className="bingo-card">
@@ -139,7 +161,13 @@ function Partida() {
                 (col, index) => (
                   <div key={index} className="bingo-column">
                     {card[col].map((num, rowIndex) => (
-                      <div key={rowIndex} className="bingo-cell">
+                      <div
+                        key={rowIndex}
+                        className={`bingo-cell ${
+                          selectedNumbers.includes(num) ? "selected" : ""
+                        }`}
+                        onClick={() => handleNumberClick(num)}
+                      >
                         {num === 0 ? "FREE" : num}
                       </div>
                     ))}
@@ -153,12 +181,10 @@ function Partida() {
         )}
       </div>
 
-      {/* Botón para iniciar el juego */}
       <button onClick={startGame} className="start-game-button" disabled={gameStarted}>
         {gameStarted ? "Juego Comenzado" : "Iniciar Juego"}
       </button>
 
-      {/* Botón de Logout */}
       <button onClick={handleLogout} className="logout-button">
         Logout
       </button>

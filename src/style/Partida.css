@@ -67,4 +67,8 @@
     border: 1px solid #ccc;
   }
   
+  .selected {
+    background-color: blue;
+    color: white;
+  }
   
