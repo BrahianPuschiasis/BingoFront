@@ -54,18 +54,18 @@ function Partida() {
 
       if (message.startsWith("Número generado:")) {
         let number = message.replace("Número generado: ", "");
-        let letter = '';
+        let letter = "";
 
         if (number >= 1 && number <= 15) {
-          letter = 'B';
+          letter = "B";
         } else if (number >= 16 && number <= 30) {
-          letter = 'I';
+          letter = "I";
         } else if (number >= 31 && number <= 45) {
-          letter = 'N';
+          letter = "N";
         } else if (number >= 46 && number <= 60) {
-          letter = 'G';
+          letter = "G";
         } else if (number >= 61 && number <= 75) {
-          letter = 'O';
+          letter = "O";
         }
 
         const formattedNumber = `${letter}${number}`;
@@ -90,7 +90,7 @@ function Partida() {
       webSocket.send(`${username} ha salido`);
       webSocket.close();
     }
-    navigate("/");
+    navigate("/"); // Redirige a la página principal después de la desconexión
   };
 
   const startGame = () => {
@@ -101,17 +101,55 @@ function Partida() {
   };
 
   const handleNumberClick = (number) => {
-    const currentBallNumber = currentNumber ? currentNumber.replace(/[A-Z]/, '') : null;
+    const currentBallNumber = currentNumber ? currentNumber.replace(/[A-Z]/, "") : null;
 
     console.log(`Número clickado: ${number}, Número aleatorio: ${currentBallNumber}`);
 
     if (currentBallNumber && number === parseInt(currentBallNumber)) {
-      setSelectedNumbers((prevSelectedNumbers) => [
-        ...prevSelectedNumbers,
-        number,
-      ]);
+      setSelectedNumbers((prevSelectedNumbers) => {
+        const newSelectedNumbers = [...prevSelectedNumbers, number];
+        if (checkVictory(newSelectedNumbers)) {
+          alert("¡Felicidades, ganaste!");
+          if (webSocket) webSocket.close(); // Cierra la conexión WebSocket
+          navigate("/sala"); // Redirige a la sala después de ganar
+        }
+        return newSelectedNumbers;
+      });
     }
   };
+
+// Función para verificar si hay una línea ganadora
+const checkVictory = (selectedNumbers) => {
+    // Definir las posiciones ganadoras (filas, columnas, diagonales, esquinas)
+    const winningLines = [
+      // Filas
+      [card.columnB[0], card.columnI[0], card.columnN[0], card.columnG[0], card.columnO[0]],
+      [card.columnB[1], card.columnI[1], card.columnN[1], card.columnG[1], card.columnO[1]],
+      [card.columnB[2], card.columnI[2], card.columnN[2], card.columnG[2], card.columnO[2]],
+      [card.columnB[3], card.columnI[3], card.columnN[3], card.columnG[3], card.columnO[3]],
+      [card.columnB[4], card.columnI[4], card.columnN[4], card.columnG[4], card.columnO[4]],
+      
+      // Columnas
+      card.columnB,  // Columna B
+      card.columnI,  // Columna I
+      card.columnN,  // Columna N
+      card.columnG,  // Columna G
+      card.columnO,  // Columna O
+  
+      // Diagonales
+      [card.columnB[0], card.columnI[1], card.columnN[2], card.columnG[3], card.columnO[4]],
+      [card.columnB[4], card.columnI[3], card.columnN[2], card.columnG[1], card.columnO[0]],
+  
+      // Esquinas
+      [card.columnB[0], card.columnO[0], card.columnB[4], card.columnO[4]],  // Esquinas B y O
+    ];
+  
+    // Verificar si alguna línea ganadora está completa
+    return winningLines.some((line) =>
+      line.every((cell) => selectedNumbers.includes(cell))
+    );
+  };
+  
 
   useEffect(() => {
     if (username && token) {
@@ -128,11 +166,7 @@ function Partida() {
   return (
     <div className="partida-container">
       <div className="current-number">
-        {currentNumber ? (
-          <h2>{currentNumber}</h2>
-        ) : (
-          <p>Esperando número...</p>
-        )}
+        {currentNumber ? <h2>{currentNumber}</h2> : <p>Esperando número...</p>}
       </div>
 
       <div className="connected-users">
