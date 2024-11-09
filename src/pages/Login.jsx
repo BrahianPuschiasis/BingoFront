@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
+/* eslint-disable no-unused-vars */
+
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [token, setToken] = useState(null);
   const [error, setError] = useState('');
-  const [webSocket, setWebSocket] = useState(null);
-  const [connectedUsers, setConnectedUsers] = useState([]);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,66 +34,13 @@ function Login() {
       }
 
       const data = await response.json();
-      setToken(data.access_token);
       setError('');
+      navigate('/home', { state: { username: username, token: data.access_token } });
+
     } catch (err) {
       setError('Error al autenticar al usuario: ' + err.message);
-      setToken(null);
     }
   };
-
-  const connectWebSocket = (username) => {
-    const ws = new WebSocket(`ws://localhost:8181/ws?username=${username}`); 
-
-    ws.onopen = () => {
-      console.log('WebSocket conectado');
-      setWebSocket(ws);
-      ws.send(username); 
-    };
-
-    ws.onmessage = (event) => {
-      const message = event.data;
-      console.log('Mensaje recibido:', message);
-
-      if (message.startsWith('Usuarios conectados:')) {
-        const users = message.replace('Usuarios conectados: ', '').split(', ').filter(user => user);
-        setConnectedUsers(users);
-      }
-    };
-
-    ws.onerror = (error) => {
-      console.error('Error en WebSocket: ', error);
-      setError('Error en la conexión WebSocket');
-    };
-
-    ws.onclose = () => {
-      console.log('WebSocket desconectado');
-      setWebSocket(null);
-      setConnectedUsers([]); 
-    };
-  };
-
-  const handleLogout = () => {
-    if (webSocket) {
-      webSocket.close();
-    }
-    setToken(null);
-    setUsername('');
-    setPassword('');
-    setConnectedUsers([]); 
-  };
-
-  useEffect(() => {
-    if (token && username) {
-      connectWebSocket(username); 
-    }
-
-    return () => {
-      if (webSocket) {
-        webSocket.close();
-      }
-    };
-  }, [token, username]); 
 
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial' }}>
@@ -120,28 +68,6 @@ function Login() {
       </form>
 
       {error && <div style={{ color: 'red' }}>{error}</div>}
-
-      {token && (
-        <div>
-          <h3>Token de Acceso:</h3>
-          <p>{token}</p>
-        </div>
-      )}
-
-      <div>
-        <h3>Usuarios Conectados:</h3>
-        <ul>
-          {connectedUsers.map((user, index) => (
-            <li key={index}>{user}</li>
-          ))}
-        </ul>
-      </div>
-
-      {token && (
-        <div>
-          <button onClick={handleLogout}>Logout</button>
-        </div>
-      )}
     </div>
   );
 }
