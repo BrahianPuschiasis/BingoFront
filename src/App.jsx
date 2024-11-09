@@ -5,7 +5,7 @@ import { Route, Routes } from 'react-router-dom';
 import Login from './pages/Login.jsx';
 import Home from './pages/Home.jsx';
 import Sala from './pages/Sala.jsx'
-import './App.css';
+// import './App.css';
 import Partida from './pages/Partida.jsx'
 
 function App() {

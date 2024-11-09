@@ -55,4 +55,16 @@
     border: 1px solid #333;
     font-size: 18px;
   }
+
+  .current-number {
+    background-color: white;
+    color: black;
+    padding: 10px;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    border: 1px solid #ccc;
+  }
+  
   
