@@ -34,6 +34,7 @@ function Partida() {
       const message = event.data;
       console.log("Mensaje recibido:", message);
 
+
       if (message.startsWith("Tarjeton:")) {
         try {
           const cardData = JSON.parse(message.replace("Tarjeton:", ""));
@@ -51,6 +52,11 @@ function Partida() {
           .filter((user) => user);
         setConnectedUsers(users);
       }
+
+
+ 
+
+
 
       if (message.startsWith("Número generado:")) {
         let number = message.replace("Número generado: ", "");

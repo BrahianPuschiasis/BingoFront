@@ -26,6 +26,38 @@ function Sala() {
       const message = event.data;
       console.log('Mensaje recibido:', message);
 
+     
+      if (message.startsWith("¡Eres el host! Eres responsable de crear la sala.")) {
+        // Definimos el objeto con el campo "ganador" vacío, tal como en tu ejemplo
+        const gameData = {
+          ganador: "",  // Aquí puedes definir el valor de 'ganador', en este caso vacío
+        };
+      
+        // Enviamos la solicitud POST utilizando fetch
+        fetch("http://localhost:8181/game", {
+          method: "POST",  // Indicamos que el método es POST
+          headers: {
+            "Content-Type": "application/json",  // Aseguramos que el contenido es JSON
+          },
+          body: JSON.stringify(gameData),  // Convertimos el objeto a JSON para enviarlo
+        })
+          .then((response) => {
+            if (!response.ok) {
+              // Si la respuesta no es exitosa, lanzamos un error
+              throw new Error("Error al crear el juego. Status: " + response.status);
+            }
+            return response.json();  // Si la respuesta es exitosa, la convertimos a JSON
+          })
+          .then((data) => {
+            console.log("Juego creado exitosamente", data);  // Imprimimos la respuesta del servidor
+          })
+          .catch((error) => {
+            console.error("Error al crear el juego:", error);  // Capturamos cualquier error
+          });
+      }
+      
+
+
       if (message.startsWith('Usuarios conectados:')) {
         const users = message.replace('Usuarios conectados: ', '').split(', ').filter(user => user);
         setConnectedUsers(users);
