@@ -1,0 +1,78 @@
+/* Home.css */
+
+/* Estilo general para la página */
+.home-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(to right, #6a11cb, #2575fc);
+  }
+  
+  .home-box {
+    background-color: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+  }
+  
+  .welcome-message {
+    margin-bottom: 30px;
+    font-size: 2rem;
+    color: #333;
+    font-weight: bold;
+  }
+  
+  .button-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  
+  .start-btn,
+  .logout-btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .start-btn {
+    background-color: #2575fc;
+    color: white;
+  }
+  
+  .start-btn:hover {
+    background-color: #6a11cb;
+  }
+  
+  .logout-btn {
+    background-color: #f44336;
+    color: white;
+  }
+  
+  .logout-btn:hover {
+    background-color: #d32f2f;
+  }
+  
+  @media (max-width: 500px) {
+    .home-box {
+      padding: 20px;
+    }
+  
+    .welcome-message {
+      font-size: 1.5rem;
+    }
+  
+    .start-btn,
+    .logout-btn {
+      font-size: 1rem;
+    }
+  }
+  

@@ -71,6 +71,17 @@ function Partida() {
         const formattedNumber = `${letter}${number}`;
         setCurrentNumber(formattedNumber);
       }
+
+      if (message.startsWith("Se terminó el juego")) {
+        alert(message); 
+        navigate("/home", { state: { username, token } });
+
+        webSocket.send(`disconnect ${username}`);
+
+        webSocket.close();
+        setWebSocket(null);
+
+      }
     };
 
     ws.onerror = (error) => {
@@ -87,17 +98,24 @@ function Partida() {
 
   const handleLogout = () => {
     if (webSocket) {
-      webSocket.send(`${username} ha salido`);
+      console.log("Tarjetón de Bingo generado al salir:", card);
+      console.log("Números seleccionados al salir:", selectedNumbers);
+  
+      webSocket.send(`disconnect ${username}`);
       webSocket.close();
     }
-    navigate("/"); 
+    navigate("/");
   };
+  
 
   const handleNumberClick = (number) => {
-    const currentBallNumber = currentNumber ? currentNumber.replace(/[A-Z]/, "") : null;
-  
-    console.log(`Número clickado: ${number}, Número aleatorio: ${currentBallNumber}`);
-  
+    const currentBallNumber = currentNumber
+      ? currentNumber.replace(/[A-Z]/, "")
+      : null;
+
+    console.log(
+      `Número clickado: ${number}, Número aleatorio: ${currentBallNumber}`
+    );
 
     if (currentBallNumber && number === parseInt(currentBallNumber)) {
       setSelectedNumbers((prevSelectedNumbers) => {
@@ -110,53 +128,111 @@ function Partida() {
   const checkVictory = (selectedNumbers) => {
     const winningLines = [
       // Filas
-      [card.columnB[0], card.columnI[0], card.columnN[0], card.columnG[0], card.columnO[0]],
-      [card.columnB[1], card.columnI[1], card.columnN[1], card.columnG[1], card.columnO[1]],
-      [card.columnB[2], card.columnI[2], card.columnN[2], card.columnG[2], card.columnO[2]],
-      [card.columnB[3], card.columnI[3], card.columnN[3], card.columnG[3], card.columnO[3]],
-      [card.columnB[4], card.columnI[4], card.columnN[4], card.columnG[4], card.columnO[4]],
+      [
+        card.columnB[0],
+        card.columnI[0],
+        card.columnN[0],
+        card.columnG[0],
+        card.columnO[0],
+      ],
+      [
+        card.columnB[1],
+        card.columnI[1],
+        card.columnN[1],
+        card.columnG[1],
+        card.columnO[1],
+      ],
+      [
+        card.columnB[2],
+        card.columnI[2],
+        card.columnN[2],
+        card.columnG[2],
+        card.columnO[2],
+      ],
+      [
+        card.columnB[3],
+        card.columnI[3],
+        card.columnN[3],
+        card.columnG[3],
+        card.columnO[3],
+      ],
+      [
+        card.columnB[4],
+        card.columnI[4],
+        card.columnN[4],
+        card.columnG[4],
+        card.columnO[4],
+      ],
 
       // Columnas
-      card.columnB,  // Columna B
-      card.columnI,  // Columna I
-      card.columnN,  // Columna N, incluyendo el "Free Space"
-      card.columnG,  // Columna G
-      card.columnO,  // Columna O
+      card.columnB, // Columna B
+      card.columnI, // Columna I
+      card.columnN, // Columna N, incluyendo el "Free Space"
+      card.columnG, // Columna G
+      card.columnO, // Columna O
 
       // Diagonales
-      [card.columnB[0], card.columnI[1], card.columnN[2], card.columnG[3], card.columnO[4]],
-      [card.columnB[4], card.columnI[3], card.columnN[2], card.columnG[1], card.columnO[0]],
+      [
+        card.columnB[0],
+        card.columnI[1],
+        card.columnN[2],
+        card.columnG[3],
+        card.columnO[4],
+      ],
+      [
+        card.columnB[4],
+        card.columnI[3],
+        card.columnN[2],
+        card.columnG[1],
+        card.columnO[0],
+      ],
     ];
 
-    return winningLines.some((line) =>
-      line.every((cell) => selectedNumbers.includes(cell) || cell === 0) // "Free Space" cuenta como seleccionado
+    return winningLines.some(
+      (line) =>
+        line.every((cell) => selectedNumbers.includes(cell) || cell === 0) // "Free Space" cuenta como seleccionado
     );
   };
 
   const handleBingoClick = () => {
     const isWinner = checkVictory(selectedNumbers);
-    
+  
+    console.log("Tarjetón de Bingo generado:", card);  // Muestra la tarjeta completa (columnas)
+    console.log("Números seleccionados (coinciden con los aleatorios):", selectedNumbers);  // Muestra los números seleccionados por el usuario
+  
     if (isWinner) {
+      webSocket.send(`Gano ${username}`);
       alert("¡Felicidades, ganaste!");
     } else {
       alert("No has ganado. Intenta de nuevo.");
     }
   
-    // Redirigir a /home independientemente de si el jugador ganó o no
-    navigate("/home");
+    webSocket.send(`disconnect ${username}`);
+  
+    webSocket.close();
+    setWebSocket(null);
+  
+    navigate("/home", { state: { username, token } });
   };
-
+  
   useEffect(() => {
     if (username && token) {
       connectWebSocket();
     }
-
+  
     return () => {
       if (webSocket) {
+        console.log("Tarjetón de Bingo generado al cerrar sesión:", card);
+        console.log("Números seleccionados al cerrar sesión:", selectedNumbers);
+  
+        if (webSocket.readyState === WebSocket.OPEN) {
+          webSocket.send(`disconnect ${username}`);
+        }
         webSocket.close();
       }
     };
   }, [username, token]);
+  
 
   return (
     <div className="partida-container">

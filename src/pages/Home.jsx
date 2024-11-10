@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import '../style/Home.css'; 
 
 function Home() {
   const { state } = useLocation();
@@ -16,10 +17,18 @@ function Home() {
   };
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial' }}>
-      <h2>Bienvenido, {username}</h2>
-      <button onClick={handleStartGame}>Iniciar Juego</button>
-      <button onClick={handleLogout} style={{ marginLeft: '10px' }}>Logout</button>
+    <div className="home-container">
+      <div className="home-box">
+        <h2 className="welcome-message">Bienvenido, {username}</h2>
+        <div className="button-container">
+          <button className="start-btn" onClick={handleStartGame}>
+            Iniciar Juego
+          </button>
+          <button className="logout-btn" onClick={handleLogout}>
+            Logout
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

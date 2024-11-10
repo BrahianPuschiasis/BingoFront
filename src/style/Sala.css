@@ -1,0 +1,109 @@
+/* Sala.css */
+
+/* Contenedor principal */
+.sala-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(to right, #6a11cb, #2575fc);
+  }
+  
+  .sala-box {
+    background-color: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+    color: #333;
+  }
+  
+  .welcome-message {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    font-weight: bold;
+  }
+  
+  .connected-users-header {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+  }
+  
+  .user-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  
+  .user-item {
+    font-size: 1.1rem;
+    padding: 5px;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .user-item:hover {
+    background-color: #e0e0e0;
+  }
+  
+  .countdown-container {
+    margin-top: 20px;
+    font-size: 1.2rem;
+    color: #2575fc;
+    font-weight: bold;
+  }
+  
+  .countdown-text {
+    font-size: 1.4rem;
+  }
+  
+  .error-message {
+    color: red;
+    margin-top: 10px;
+  }
+  
+  .logout-btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    background-color: #f44336;
+    color: white;
+    margin-top: 20px;
+    transition: all 0.3s ease;
+  }
+  
+  .logout-btn:hover {
+    background-color: #d32f2f;
+  }
+  
+  @media (max-width: 500px) {
+    .sala-box {
+      padding: 20px;
+    }
+  
+    .welcome-message {
+      font-size: 1.5rem;
+    }
+  
+    .user-item {
+      font-size: 1rem;
+    }
+  
+    .countdown-text {
+      font-size: 1.2rem;
+    }
+  
+    .logout-btn {
+      font-size: 1rem;
+    }
+  }
+  
