@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 function Sala() {
   const [webSocket, setWebSocket] = useState(null);
   const [connectedUsers, setConnectedUsers] = useState([]);
+  const [countdown, setCountdown] = useState(0); 
   const [error, setError] = useState('');
   const { state } = useLocation();
   const { username, token } = state || {};
@@ -16,7 +17,9 @@ function Sala() {
     ws.onopen = () => {
       console.log('WebSocket conectado');
       setWebSocket(ws);
-      ws.send(username);
+
+ 
+      ws.send('start countdown');
     };
 
     ws.onmessage = (event) => {
@@ -26,6 +29,15 @@ function Sala() {
       if (message.startsWith('Usuarios conectados:')) {
         const users = message.replace('Usuarios conectados: ', '').split(', ').filter(user => user);
         setConnectedUsers(users);
+      }
+
+      if (message.startsWith('Tiempo:')) {
+        const timeLeft = parseInt(message.replace('Tiempo: ', '').replace(' segundos', ''), 10);
+        setCountdown(timeLeft); 
+      }
+
+      if (message === '¡El juego ha comenzado!') {
+        navigate('/partida', { state: { username, token, connectedUsers } });
       }
     };
 
@@ -46,10 +58,6 @@ function Sala() {
       webSocket.close();
     }
     navigate('/');
-  };
-
-  const handleCreateCard = () => {
-    navigate('/partida', { state: { username, token, connectedUsers } });
   };
 
   useEffect(() => {
@@ -74,9 +82,15 @@ function Sala() {
         ))}
       </ul>
 
+      <div style={{ marginTop: '20px' }}>
+        {countdown > 0
+          ? <p>Esperando rivales... {countdown} segundos</p>
+          : <p>¡Ya estamos listos para jugar!</p>
+        }
+      </div>
+
       {error && <div style={{ color: 'red' }}>{error}</div>}
 
-      <button onClick={handleCreateCard}>Crear Tarjetón</button>
       <button onClick={handleLogout}>Logout</button>
     </div>
   );

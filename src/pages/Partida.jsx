@@ -90,37 +90,24 @@ function Partida() {
       webSocket.send(`${username} ha salido`);
       webSocket.close();
     }
-    navigate("/"); // Redirige a la página principal después de la desconexión
-  };
-
-  const startGame = () => {
-    if (webSocket && !gameStarted) {
-      webSocket.send("iniciar juego");
-      setGameStarted(true);
-    }
+    navigate("/"); 
   };
 
   const handleNumberClick = (number) => {
     const currentBallNumber = currentNumber ? currentNumber.replace(/[A-Z]/, "") : null;
-
+  
     console.log(`Número clickado: ${number}, Número aleatorio: ${currentBallNumber}`);
+  
 
     if (currentBallNumber && number === parseInt(currentBallNumber)) {
       setSelectedNumbers((prevSelectedNumbers) => {
         const newSelectedNumbers = [...prevSelectedNumbers, number];
-        if (checkVictory(newSelectedNumbers)) {
-          alert("¡Felicidades, ganaste!");
-          if (webSocket) webSocket.close(); // Cierra la conexión WebSocket
-          navigate("/sala"); // Redirige a la sala después de ganar
-        }
         return newSelectedNumbers;
       });
     }
   };
 
-// Función para verificar si hay una línea ganadora
-const checkVictory = (selectedNumbers) => {
-    // Definir las posiciones ganadoras (filas, columnas, diagonales, esquinas)
+  const checkVictory = (selectedNumbers) => {
     const winningLines = [
       // Filas
       [card.columnB[0], card.columnI[0], card.columnN[0], card.columnG[0], card.columnO[0]],
@@ -128,28 +115,36 @@ const checkVictory = (selectedNumbers) => {
       [card.columnB[2], card.columnI[2], card.columnN[2], card.columnG[2], card.columnO[2]],
       [card.columnB[3], card.columnI[3], card.columnN[3], card.columnG[3], card.columnO[3]],
       [card.columnB[4], card.columnI[4], card.columnN[4], card.columnG[4], card.columnO[4]],
-      
+
       // Columnas
       card.columnB,  // Columna B
       card.columnI,  // Columna I
-      card.columnN,  // Columna N
+      card.columnN,  // Columna N, incluyendo el "Free Space"
       card.columnG,  // Columna G
       card.columnO,  // Columna O
-  
+
       // Diagonales
       [card.columnB[0], card.columnI[1], card.columnN[2], card.columnG[3], card.columnO[4]],
       [card.columnB[4], card.columnI[3], card.columnN[2], card.columnG[1], card.columnO[0]],
-  
-      // Esquinas
-      [card.columnB[0], card.columnO[0], card.columnB[4], card.columnO[4]],  // Esquinas B y O
     ];
-  
-    // Verificar si alguna línea ganadora está completa
+
     return winningLines.some((line) =>
-      line.every((cell) => selectedNumbers.includes(cell))
+      line.every((cell) => selectedNumbers.includes(cell) || cell === 0) // "Free Space" cuenta como seleccionado
     );
   };
+
+  const handleBingoClick = () => {
+    const isWinner = checkVictory(selectedNumbers);
+    
+    if (isWinner) {
+      alert("¡Felicidades, ganaste!");
+    } else {
+      alert("No has ganado. Intenta de nuevo.");
+    }
   
+    // Redirigir a /home independientemente de si el jugador ganó o no
+    navigate("/home");
+  };
 
   useEffect(() => {
     if (username && token) {
@@ -215,8 +210,8 @@ const checkVictory = (selectedNumbers) => {
         )}
       </div>
 
-      <button onClick={startGame} className="start-game-button" disabled={gameStarted}>
-        {gameStarted ? "Juego Comenzado" : "Iniciar Juego"}
+      <button onClick={handleBingoClick} className="bingo-button">
+        Bingo!
       </button>
 
       <button onClick={handleLogout} className="logout-button">
