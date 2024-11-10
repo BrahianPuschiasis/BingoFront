@@ -43,6 +43,10 @@ function Login() {
     }
   };
 
+  const handleSignupRedirect = () => {
+    navigate('/signup'); 
+  };
+
   return (
     <div className="login-container">
       <div className="login-box">
@@ -70,6 +74,8 @@ function Login() {
         </form>
 
         {error && <div className="error-message">{error}</div>}
+
+        <button onClick={handleSignupRedirect} className="submit-btn">Signup</button> 
       </div>
     </div>
   );

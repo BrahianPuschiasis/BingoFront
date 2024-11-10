@@ -1,0 +1,132 @@
+/* Estilos generales */
+.history-wrapper {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  background-color: #f7f7f7;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 1000px;
+  margin: 20px auto;
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.history-header h1 {
+  font-size: 24px;
+  color: #333;
+}
+
+.history-room-number {
+  font-size: 20px;
+  color: #555;
+}
+
+.history-bingo-card-container {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-gap: 5px;
+  max-width: 1px; 
+  margin: 0 auto;
+}
+
+.history-column-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.history-column-container h3 {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  background-color: #4caf50;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.history-cell-container {
+  width: 45px;
+  height: 45px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f2f2f2;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 18px;
+  margin-bottom: 5px;
+  color: #333;
+  transition: background-color 0.3s;
+}
+
+.history-cell-container.highlight {
+  background-color: #ff5733;
+  color: white;
+}
+
+.history-cell-container.free {
+  background-color: #dcdcdc;
+  color: #888;
+}
+
+.history-footer {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.history-footer .history-button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: background-color 0.3s;
+}
+
+.history-footer .history-button:hover {
+  background-color: #45a049;
+}
+
+.history-footer .history-button:active {
+  background-color: #388e3c;
+}
+
+.history-footer .logout-button {
+  background-color: #f44336;
+}
+
+.history-footer .logout-button:hover {
+  background-color: #e53935;
+}
+
+.history-footer .logout-button:active {
+  background-color: #c62828;
+}
+
+@media (max-width: 768px) {
+  .history-wrapper {
+    padding: 15px;
+  }
+
+  .history-bingo-card-container {
+    padding: 10px;
+  }
+
+  .history-column-container {
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .history-cell-container {
+    width: 30px;
+    height: 30px;
+    font-size: 14px;
+  }
+}

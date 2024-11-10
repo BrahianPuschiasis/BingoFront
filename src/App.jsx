@@ -7,6 +7,8 @@ import Home from './pages/Home.jsx';
 import Sala from './pages/Sala.jsx'
 // import './App.css';
 import Partida from './pages/Partida.jsx'
+import History  from './pages/History.jsx';
+import Signup from './pages/Signup.jsx';
 
 function App() {
   return (
@@ -15,6 +17,8 @@ function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/sala" element={<Sala />} />
         <Route path="/partida" element={<Partida />} />
+        <Route path="/history" element={<History />} />
+        <Route path="/signup" element={<Signup />} />
 
       </Routes>
   );

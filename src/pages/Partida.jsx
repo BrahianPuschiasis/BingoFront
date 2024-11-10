@@ -200,14 +200,48 @@ function Partida() {
     );
   };
 
-  const handleBingoClick = () => {
+  const handleBingoClick = async () => {
     const isWinner = checkVictory(selectedNumbers);
   
     console.log("Tarjetón de Bingo generado:", card);  // Muestra la tarjeta completa (columnas)
     console.log("Números seleccionados (coinciden con los aleatorios):", selectedNumbers);  // Muestra los números seleccionados por el usuario
   
     if (isWinner) {
+
+      const data = {
+        ganador: username,
+        columnB: card.columnB,
+        columnI: card.columnI,
+        columnN: card.columnN,
+        columnG: card.columnG,
+        columnO: card.columnO,
+        numerosGenerados: selectedNumbers,
+      };
+  
+      try {
+        const response = await fetch("http://localhost:8181/game", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+  
+        if (!response.ok) {
+          throw new Error("Error al guardar el ganador");
+        }
+        console.log("Ganador guardado correctamente");
+      } catch (error) {
+        console.error("Error al realizar el POST:", error);
+      }
+
+
+
       webSocket.send(`Gano ${username}`);
+
+      
+
+
       alert("¡Felicidades, ganaste!");
     } else {
       alert("No has ganado. Intenta de nuevo.");
